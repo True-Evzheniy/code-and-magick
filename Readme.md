@@ -1,7 +1,7 @@
 # Личный проект «Код и Магия» [![Build status][travis-image]][travis-url] [![Dependency status][dependency-image]][dependency-url]
 
 * Студент: [Евгений Артамонов](https://up.htmlacademy.ru/javascript/4/user/92049).
-* Наставник: `Неизвестно`.
+* Наставник: Иван Гунченко.
 
 ---
 
