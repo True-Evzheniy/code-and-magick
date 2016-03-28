@@ -378,18 +378,59 @@
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
+      this.renderText = function(text, width) {
+        var lineHeight = parseInt(this.ctx.font, 10) * 1.5;
+        var marginTop = lineHeight;
+        var textArr = text.split(' ');
+        var countWords = textArr.length;
+        var line = '';
+        for(var i = 0; i < countWords; i++) {
+          var testLine = line + textArr[i] + ' ';
+          var testWidth = this.ctx.measureText(testLine).width;
+          if(testWidth > width) {
+            this.ctx.fillText(line, 110, marginTop + 100);
+            line = textArr[i] + ' ';
+            marginTop += lineHeight;
+          } else {
+            line = testLine;
+          }
+          this.ctx.fillText(line, 110, marginTop + 100);
+        }
+      };
+
+      this.getHeight = function(width, text, font) {
+        var textBlock = document.createElement('div');
+        textBlock.style.cssText = 'font: ' + font + ';line-height: ' + parseInt(font, 10) * 1.5 + 'px' + ';width: ' + width + 'px';
+        textBlock.innerHTML = text;
+        document.body.appendChild(textBlock);
+        var height = textBlock.offsetHeight;
+        textBlock.remove();
+        return height + parseInt(font, 10);
+      };
+      this.renderWindow = function(text, width) {
+        var font = '16px PT Mono';
+        this.ctx.font = '16px PT Mono';
+        var height = this.getHeight(width - 20, text, font);
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        this.ctx.fillRect(110, 110, width, height);
+        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.fillRect(100, 100, width, height);
+        this.ctx.fillStyle = 'black';
+        this.renderText(text, width - 20);
+      };
+      // var ctx = this.ctx;
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          this.renderWindow('Вы победили', 150);
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          this.renderWindow('Вы проиграли', 150);
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          this.renderWindow('Игра на паузе', 150);
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          this.renderWindow('Добро пожаловать в игру! Нажмите пробел чтобы начать', 200);
           break;
       }
     },
