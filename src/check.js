@@ -1,31 +1,34 @@
+'use strict';
 function getMessage(a, b) {
-
+  var value;
   if(a === true) {
-    return 'Я попал в ' +  b;
+    value = 'Я попал в ' + b;
   }
 
   if(a === false) {
-    return 'Я никуда не попал';
+    value = 'Я никуда не попал';
   }
 
   if(typeof a === 'number') {
-    return 'Я прыгнул на ' + a * 100 + ' сантиметров';
+    value = 'Я прыгнул на ' + a * 100 + ' сантиметров';
   }
 
   if(Array.isArray(a) && Array.isArray(b)) {
     var summ = 0;
-    for(var i = 0 ; i < a.length; i++) {
+    for(var i = 0; i < a.length; i++) {
       summ += a[i] * b[i];
     }
-    return 'Я прошёл ' + summ + ' метров';
+    value = 'Я прошёл ' + summ + ' метров';
   }
 
   if(Array.isArray(a)) {
-    var summ = 0;
-    for(var i = 0; i < a.length; i++) {
+    summ = 0;
+    for(i = 0; i < a.length; i++) {
       summ += a[i];
     }
-    return 'Я прошёл ' + summ + ' шагов';
+    value = 'Я прошёл ' + summ + ' шагов';
   }
+
+  return value;
 
 }
