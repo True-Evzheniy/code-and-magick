@@ -21,7 +21,7 @@ function getMessage(a, b) {
     value = 'Я прошёл ' + summ + ' метров';
   }
 
-  if(Array.isArray(a)) {
+  if(Array.isArray(a) && !Array.isArray(b)) {
     summ = 0;
     for(i = 0; i < a.length; i++) {
       summ += a[i];
