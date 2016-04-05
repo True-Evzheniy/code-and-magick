@@ -1,6 +1,8 @@
 'use strict';
 
 (function() {
+  var browserCookies = require('browser-cookies');
+
   var formContainer = document.querySelector('.overlay-container');
   var formOpenButton = document.querySelector('.reviews-controls-new');
   var formCloseButton = document.querySelector('.review-form-close');
@@ -10,6 +12,8 @@
   var labelReviewTextarea = formContainer.querySelector('.review-fields-text');
   var formSubmitBtn = formContainer.querySelector('.review-submit');
   var formLabelsFild = formContainer.querySelector('.review-fields');
+  var form = formContainer.querySelector('.review-form');
+  var radioArr = formContainer.querySelectorAll('[id^=review-mark]');
 
   function formCheck() {
     if(formNameInput.value.trim()) {
@@ -42,7 +46,32 @@
     }
   }
 
+  function getTimeEnd() {
+    var now = new Date();
+    var birthday = new Date(now.getFullYear(), 8, 11, now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+    if(now < birthday) {
+      birthday = new Date(now.getFullYear() - 1, 8, 11, now.getHours(), now.getMinutes(), now.getSeconds(), now.getMilliseconds());
+    }
+    return 2 * now - birthday;
+  }
+  function getCheckedRadio() {
+    for(var i = 0; i < radioArr.length; i++) {
+      if(radioArr[i].checked) {
+        break;
+      }
+    }
+    return i;
+  }
+  function checkedRadio(num) {
+    for(var i = 0; i < radioArr.length; i++) {
+      radioArr[i].checked = false;
+    }
+    radioArr[num].checked = true;
+  }
   formNameInput.required = true;
+  checkedRadio(browserCookies.get('radio') || 2);
+  formNameInput.value = browserCookies.get('name') || 'Вася Пупкин';
+  formReviewTextarea.value = browserCookies.get('review') || '';
   formCheck();
 
   formContainer.onchange = function(evt) {
@@ -58,6 +87,15 @@
 
   formContainer.oninput = function() {
     formCheck();
+  };
+
+  form.onsubmit = function(e) {
+    var timeEnd = getTimeEnd();
+    e.preventDefault();
+    browserCookies.set('name', formNameInput.value, {expires: timeEnd});
+    browserCookies.set('review', formReviewTextarea.value, {expires: timeEnd});
+    browserCookies.set('radio', getCheckedRadio() + '', {expires: timeEnd});
+    form.submit();
   };
 
   formOpenButton.onclick = function(evt) {
