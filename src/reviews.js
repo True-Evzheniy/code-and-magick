@@ -44,6 +44,8 @@ function renderReview(data, container) {
   var imgTemplate = element.querySelector('img');
   var textReview = element.querySelector('.review-text');
   var reviewRating = element.querySelector('.review-rating');
+  var reviewDate = element.querySelector('.review-date');
+  var reviewUsefulness = element.querySelector('.review-usefulness');
   reviewRating.style.display = 'inline-block';
   for(var i = 0; i < data.rating - 1; i++) {
     reviewRating.parentNode.insertBefore(reviewRating.cloneNode(true), reviewRating.nextSibling);
@@ -60,6 +62,8 @@ function renderReview(data, container) {
     element.classList.add('review-load-failure');
   };
   imgTemplate.alt = imgTemplate.title = data.author.name;
+  reviewDate.innerHTML = new Date(data.date).toLocaleString('ru', {year: 'numeric', month: 'long', day: 'numeric'});
+  reviewUsefulness.innerHTML = data.review_usefulness;
   container.appendChild(element);
 }
 
