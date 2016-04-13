@@ -725,4 +725,49 @@
   var game = new Game(document.querySelector('.demo'));
   game.initializeLevelAndStart();
   game.setGameStatus(window.Game.Verdict.INTRO);
+
+  /**  ПАРАЛЛАКС */
+  var clouds = document.querySelector('.header-clouds');
+  var gameContainer = document.querySelector('.demo');
+  /* Изменение позиции фона симметрично скроллингу страницы */
+  function moveHorizontal() {
+    clouds.style.backgroundPosition = -window.pageYOffset + 'px';
+  }
+  /** Троттл с сайта Кантора */
+  function throttle(func, ms) {
+    var isThrottled = false, savedArgs, savedThis;
+    function wrapper() {
+      if (isThrottled) { // (2)
+        savedArgs = arguments;
+        savedThis = this;
+        return;
+      }
+      func.apply(this, arguments); // (1)
+      isThrottled = true;
+      setTimeout(function() {
+        isThrottled = false; // (3)
+        if (savedArgs) {
+          wrapper.apply(savedThis, savedArgs);
+          savedArgs = savedThis = null;
+        }
+      }, ms);
+    }
+    return wrapper;
+  }
+
+  /** Включение-выключение паралакса в зависимости от наличия их на экране */
+  function enabledParallacs() {
+    if(clouds.getBoundingClientRect().bottom < 0) {
+      window.removeEventListener('scroll', moveHorizontal);
+    } else {
+      window.addEventListener('scroll', moveHorizontal);
+    }
+    if(gameContainer.getBoundingClientRect().bottom < 0) {
+      game.setGameStatus(Game.Verdict.PAUSE);
+    }
+  }
+  /** Оптимизация тротлингом */
+  window.addEventListener('scroll', function() {
+    throttle(enabledParallacs, 100)();
+  });
 })();
