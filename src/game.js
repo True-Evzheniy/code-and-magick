@@ -400,7 +400,7 @@
 
       this.getHeight = function(width, text, font) {
         var textBlock = document.createElement('div');
-        textBlock.style.cssText = 'font: ' + font + ';line-height: ' + parseInt(font, 10) * 1.5 + 'px' + ';width: ' + width + 'px';
+        textBlock.style.cssText = 'font: ' + font + ';line-height: ' + parseInt(font, 10) * 1.5 + 'px' + ';width: ' + (width - 15) + 'px';
         textBlock.innerHTML = text;
         document.body.appendChild(textBlock);
         var height = textBlock.offsetHeight;
