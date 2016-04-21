@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+module.exports = (function() {
   var browserCookies = require('browser-cookies');
 
   var formContainer = document.querySelector('.overlay-container');
