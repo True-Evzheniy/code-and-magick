@@ -2,3 +2,4 @@
 require('./game');
 require('./form');
 require('./reviews');
+require('./gallery');
