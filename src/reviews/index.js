@@ -4,6 +4,7 @@ var Review = require('./review');
 
 module.export = (function() {
   var reviewsFilter = document.querySelector('.reviews-filter');
+  var filtersBtn = reviewsFilter.querySelectorAll('input');
   var reviewsList = document.querySelector('.reviews-list');
   reviewsFilter.classList.add('invisible');
   var reviews = document.querySelector('.reviews');
@@ -55,10 +56,17 @@ module.export = (function() {
       reviewsFilter.classList.remove('invisible');
     });
   }
+
   function start(data) {
     dataReviews = data;
-    reviewsFiltered = data;
-    renderReviews(dataReviews);
+    var filter = localStorage.getItem('filter');
+    var filteredData = filtring(filter, data);
+    if (filteredData) {
+      renderReviews(reviewsFiltered, counter);
+      setFilterBtn(filter);
+    } else {
+      renderReviews(dataReviews);
+    }
     enabledFilters(dataReviews);
     enabledBtn();
   }
@@ -69,53 +77,68 @@ module.export = (function() {
     });
     renderedReviews = [];
   }
+
+  function setFilterBtn(filter) {
+    Array.prototype.forEach.call(filtersBtn, function(item) {
+      item.checked = false;
+      if(item.id === filter) {
+        item.checked = true;
+      }
+    });
+  }
+
+  function filtring(filterId, data) {
+    var dataToSort = data.slice('');
+
+    switch(filterId) {
+      case 'reviews-all':
+        reviewsFiltered = dataToSort;
+        break;
+      case 'reviews-recent':
+        var compareDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 14);
+        reviewsFiltered = dataToSort
+          .sort(function(a, b) {
+            return new Date(b.date) - new Date(a.date);
+          })
+          .filter(function(item) {
+            return (compareDate - new Date(item.date)) < 0;
+          });
+        break;
+      case 'reviews-good':
+        reviewsFiltered = dataToSort
+          .sort(function(a, b) {
+            return b.rating - a.rating;
+          })
+          .filter(function(item) {
+            return item.rating >= 3;
+          });
+        break;
+      case 'reviews-bad':
+        reviewsFiltered = dataToSort
+          .sort(function(a, b) {
+            return a.rating - b.rating;
+          })
+          .filter(function(item) {
+            return item.rating < 3;
+          });
+        break;
+      case 'reviews-popular':
+        reviewsFiltered = dataToSort.sort(function(a, b) {
+          return b.review_usefulness - a.review_usefulness;
+        });
+        break;
+    }
+    return reviewsFiltered;
+  }
+
   function enabledFilters(data) {
     reviewsFilter.onclick = function(evt) {
       counter = 0;
       var id = evt.target.id;
-      var dataToSort = data.slice('');
-      switch(id) {
-        case 'reviews-all':
-          reviewsFiltered = dataToSort;
-          renderReviews(dataToSort);
-          break;
-        case 'reviews-recent':
-          var compareDate = new Date(Date.now() - 1000 * 60 * 60 * 24 * 14);
-          reviewsFiltered = dataToSort
-            .sort(function(a, b) {
-              return new Date(b.date) - new Date(a.date);
-            })
-            .filter(function(item) {
-              return (compareDate - new Date(item.date)) < 0;
-            });
-          renderReviews(reviewsFiltered);
-          break;
-        case 'reviews-good':
-          reviewsFiltered = dataToSort
-            .sort(function(a, b) {
-              return b.rating - a.rating;
-            })
-            .filter(function(item) {
-              return item.rating >= 3;
-            });
-          renderReviews(reviewsFiltered);
-          break;
-        case 'reviews-bad':
-          reviewsFiltered = dataToSort
-            .sort(function(a, b) {
-              return a.rating - b.rating;
-            })
-            .filter(function(item) {
-              return item.rating < 3;
-            });
-          renderReviews(reviewsFiltered);
-          break;
-        case 'reviews-popular':
-          reviewsFiltered = dataToSort.sort(function(a, b) {
-            return b.review_usefulness - a.review_usefulness;
-          });
-          renderReviews(reviewsFiltered);
-          break;
+      var filteredData = filtring(id, data);
+      if(filteredData) {
+        localStorage.setItem('filter', id);
+        renderReviews(reviewsFiltered, counter);
       }
     };
   }
