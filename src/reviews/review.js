@@ -8,6 +8,8 @@ function Review(data, container) {
   this.element = createDomReview(data);
   this.element.addEventListener('click', this.onClickQuizHendler);
   container.appendChild(this.element);
+  this.onClickQuizHendler = this.onClickQuizHendler.bind(this);
+  this.remove = this.remove.bind(this);
 }
 
 Review.prototype.onClickQuizHendler = function(evt) {
